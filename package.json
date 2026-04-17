@@ -10,6 +10,7 @@
     "app": "tsx src/cli/index.ts",
     "build-knowledge": "tsx src/cli/index.ts build-knowledge",
     "generate": "tsx src/cli/index.ts generate",
+    "persona": "tsx src/cli/index.ts persona",
     "publish": "tsx src/cli/index.ts publish",
     "run": "tsx src/cli/index.ts run"
   },

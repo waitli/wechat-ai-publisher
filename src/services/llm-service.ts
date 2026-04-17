@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import { z } from "zod";
 import { config } from "../config/index.js";
 import { ArticleDraft, SourceBrief, SourceMaterial } from "../domain/article.js";
+import { PersonaProfile } from "../domain/persona.js";
 import { withRetry } from "../utils/retry.js";
 import { PersistentRoundRobin } from "../utils/round-robin.js";
 import { OpenAiCompatibleClient } from "./openai-compatible.js";
@@ -179,6 +180,7 @@ export class LlmService {
     idea: string;
     references: string[];
     opinion?: string;
+    persona?: PersonaProfile | null;
     source?: SourceMaterial;
     sourceBrief?: SourceBrief;
   }): Promise<ArticleDraft> {
@@ -190,6 +192,14 @@ export class LlmService {
     const referenceText = input.references.length > 0
       ? input.references.map((item, index) => `参考片段 ${index + 1}:\n${item}`).join("\n\n")
       : "暂无可用历史片段，请保持自然、克制、分析型中文公众号写法。";
+
+    const personaContext = input.persona
+      ? [
+          `人设标题：${input.persona.title}`,
+          "人设要求：",
+          input.persona.text
+        ].join("\n")
+      : "暂无人设设定。";
 
     const sourceContext = input.source && input.sourceBrief
       ? [
@@ -222,12 +232,16 @@ export class LlmService {
       "sections 是数组，每个元素必须包含 heading, paragraphs，可选 imagePrompt。",
       "coverPrompt 和 imagePrompt 必须使用英文。",
       "文章语言必须是简体中文。",
+      "必须遵守人设设定，并且整篇文章要从这个人设的视角和语气去写。",
       "如果提供了来源材料，要以用户观点为主线，把来源内容当作证据、案例或反向论据，不要写成单纯摘要。"
     ].join("\n");
 
     const userPrompt = [
       `选题：${input.idea}`,
       writingIntent,
+      "",
+      "人设设定：",
+      personaContext,
       "",
       "风格参考：",
       referenceText,
@@ -309,6 +323,7 @@ export class LlmService {
     idea: string;
     references: string[];
     opinion?: string;
+    persona?: PersonaProfile | null;
     source?: SourceMaterial;
     sourceBrief?: SourceBrief;
   }): Promise<ArticleDraft> {
@@ -323,19 +338,24 @@ export class LlmService {
 
     const snippets = input.references.slice(0, 2).join(" ");
     const framing = input.opinion ?? input.idea;
+    const personaPrefix = input.persona
+      ? `${input.persona.title}视角下的`
+      : "";
     const sourceLine = input.source
       ? `文章会围绕来源《${input.source.title}》展开，并结合“${framing}”这个判断来组织论述。`
       : `围绕“${framing}”来组织论述。`;
     const sourceSummary = input.sourceBrief?.summary ?? input.source?.summary ?? "";
+    const personaText = input.persona?.text ?? "默认没有额外人设约束，请保持稳健、清晰、分析型中文公众号写法。";
 
     return {
-      title: `关于“${framing}”的一次结构化草稿`,
-      summary: `围绕“${framing}”的公众号文章初稿，结合你的观点和来源材料组织分析。`,
+      title: `${personaPrefix}关于“${framing}”的一次结构化草稿`,
+      summary: `围绕“${framing}”的公众号文章初稿，结合人设、观点和来源材料组织分析。${personaText ? ` 人设：${personaText}` : ""}`,
       coverPrompt: `editorial illustration about ${framing}, clean composition, magazine cover`,
       sections: [
         {
           heading: "问题从哪里开始",
           paragraphs: [
+            input.persona ? `写作人设：${input.persona.title}。` : "写作人设未设置。",
             sourceLine,
             sourceSummary || snippets || "这里会在接入真实模型后注入来源摘要或历史文章片段，帮助模型贴近既有表达习惯。"
           ],

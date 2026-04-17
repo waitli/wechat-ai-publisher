@@ -2,6 +2,8 @@ import { Command } from "commander";
 import { buildKnowledgeBase } from "../pipelines/build-knowledge.js";
 import { generateDraftOnly, runPublisherPipeline, RunOptions } from "../pipelines/run-publisher.js";
 import { Publisher } from "../services/publisher.js";
+import { EmbeddingService } from "../services/embedding-service.js";
+import { VectorStore } from "../services/vector-store.js";
 
 const program = new Command();
 
@@ -27,6 +29,27 @@ program
   .action(async () => {
     const result = await buildKnowledgeBase();
     console.log(JSON.stringify(result, null, 2));
+  });
+
+program
+  .command("persona")
+  .requiredOption("--text <text>", "Persona description")
+  .option("--title <text>", "Persona title", "current")
+  .description("Set or update the current writing persona in the vector store")
+  .action(async (options: { text: string; title?: string }) => {
+    const embeddingService = new EmbeddingService();
+    const vectorStore = new VectorStore();
+    const vector = await embeddingService.embed(options.text);
+    const result = await vectorStore.upsertPersonaProfile({
+      title: options.title ?? "current",
+      text: options.text,
+      vector
+    });
+    console.log(JSON.stringify({
+      id: result.id,
+      title: result.title,
+      updatedAt: result.updatedAt
+    }, null, 2));
   });
 
 program

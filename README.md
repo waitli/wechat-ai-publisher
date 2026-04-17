@@ -65,11 +65,22 @@ cp .env.example .env
 
 ```bash
 npm run build-knowledge
+npm run persona -- --text "你要写给一群重视效率和系统化工作流的中文互联网产品经理，语气克制，偏分析，少口号，多结论"
 npm run generate -- --idea "为什么现代打工人越来越喜欢做副业"
 npm run generate -- --url "https://github.com/owner/repo" --opinion "我认为未来高频工作会逐渐从通用 agent 转向 AI 原生工作流工具"
 npm run publish -- --file ./drafts/current/draft.md
 npm run run -- --idea "为什么现代打工人越来越喜欢做副业"
 npm run run -- --url "https://github.com/owner/repo" --opinion "我认为未来高频工作会逐渐从通用 agent 转向 AI 原生工作流工具"
+```
+
+示例输出：
+
+```json
+{
+  "id": "current",
+  "title": "current",
+  "updatedAt": "2026-04-17T10:00:00.000Z"
+}
 ```
 
 ## 示例

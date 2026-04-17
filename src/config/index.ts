@@ -39,6 +39,8 @@ const configSchema = z.object({
   IMAGE_LLM_MODEL: z.string().default(""),
   VECTOR_DB_PATH: z.string().default("./data/vectordb.lancedb"),
   VECTOR_TABLE_NAME: z.string().default("style_history"),
+  PERSONA_TABLE_NAME: z.string().default("persona_profile"),
+  PERSONA_RECORD_ID: z.string().default("current"),
   INGEST_MANIFEST_PATH: z.string().default("./data/ingest-manifest.json"),
   HISTORY_ARTICLES_PATH: z.string().default("./history_articles"),
   DRAFT_OUTPUT_PATH: z.string().default("./drafts/current/draft.md"),
@@ -94,7 +96,9 @@ export const config = {
     runHistoryDir: resolvePath(parsed.RUN_HISTORY_DIR)
   },
   vectorStore: {
-    tableName: parsed.VECTOR_TABLE_NAME
+    tableName: parsed.VECTOR_TABLE_NAME,
+    personaTableName: parsed.PERSONA_TABLE_NAME,
+    personaRecordId: parsed.PERSONA_RECORD_ID
   },
   publishing: {
     wechatAppId: parsed.WECHAT_APP_ID,

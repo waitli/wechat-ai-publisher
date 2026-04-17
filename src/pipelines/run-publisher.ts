@@ -68,9 +68,16 @@ export async function runPublisherPipeline(options: RunOptions): Promise<RunReco
     const publisher = new Publisher();
     const urlIngestionService = new UrlIngestionService();
 
+    const persona = await vectorStore.getCurrentPersona();
+
     const source = options.url
       ? await urlIngestionService.ingest(options.url)
       : undefined;
+
+    if (persona) {
+      record.personaTitle = persona.title;
+      record.personaUpdatedAt = persona.updatedAt;
+    }
 
     if (source) {
       record.sourceUrl = source.url;
@@ -107,6 +114,9 @@ export async function runPublisherPipeline(options: RunOptions): Promise<RunReco
     };
     if (normalizedOpinion) {
       articleInput.opinion = normalizedOpinion;
+    }
+    if (persona) {
+      articleInput.persona = persona;
     }
     if (source) {
       articleInput.source = source;

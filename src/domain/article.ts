@@ -34,6 +34,8 @@ export type RunRecord = {
   idea: string;
   startedAt: string;
   retrievedChunks: number;
+  personaTitle?: string;
+  personaUpdatedAt?: string;
   sourceUrl?: string;
   sourceTitle?: string;
   sourceType?: string;
