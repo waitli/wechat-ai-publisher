@@ -195,11 +195,11 @@ export class LlmService {
 
     const personaContext = input.persona
       ? [
-          `人设标题：${input.persona.title}`,
-          "人设要求：",
+          `写作者身份：${input.persona.title}`,
+          "写作者设定：",
           input.persona.text
         ].join("\n")
-      : "暂无人设设定。";
+      : "暂无写作者身份设定。";
 
     const sourceContext = input.source && input.sourceBrief
       ? [
@@ -232,7 +232,7 @@ export class LlmService {
       "sections 是数组，每个元素必须包含 heading, paragraphs，可选 imagePrompt。",
       "coverPrompt 和 imagePrompt 必须使用英文。",
       "文章语言必须是简体中文。",
-      "必须遵守人设设定，并且整篇文章要从这个人设的视角和语气去写。",
+      "必须遵守写作者身份设定，并且整篇文章要从这个写作者的视角和语气去写。",
       "如果提供了来源材料，要以用户观点为主线，把来源内容当作证据、案例或反向论据，不要写成单纯摘要。"
     ].join("\n");
 
@@ -240,7 +240,7 @@ export class LlmService {
       `选题：${input.idea}`,
       writingIntent,
       "",
-      "人设设定：",
+      "写作者身份设定：",
       personaContext,
       "",
       "风格参考：",
@@ -339,7 +339,7 @@ export class LlmService {
     const snippets = input.references.slice(0, 2).join(" ");
     const framing = input.opinion ?? input.idea;
     const personaPrefix = input.persona
-      ? `${input.persona.title}视角下的`
+      ? `${input.persona.title}身份下的`
       : "";
     const sourceLine = input.source
       ? `文章会围绕来源《${input.source.title}》展开，并结合“${framing}”这个判断来组织论述。`
@@ -349,13 +349,13 @@ export class LlmService {
 
     return {
       title: `${personaPrefix}关于“${framing}”的一次结构化草稿`,
-      summary: `围绕“${framing}”的公众号文章初稿，结合人设、观点和来源材料组织分析。${personaText ? ` 人设：${personaText}` : ""}`,
+      summary: `围绕“${framing}”的公众号文章初稿，结合写作者身份、观点和来源材料组织分析。${personaText ? ` 写作者身份：${personaText}` : ""}`,
       coverPrompt: `editorial illustration about ${framing}, clean composition, magazine cover`,
       sections: [
         {
           heading: "问题从哪里开始",
           paragraphs: [
-            input.persona ? `写作人设：${input.persona.title}。` : "写作人设未设置。",
+            input.persona ? `写作者身份：${input.persona.title}。` : "写作者身份未设置。",
             sourceLine,
             sourceSummary || snippets || "这里会在接入真实模型后注入来源摘要或历史文章片段，帮助模型贴近既有表达习惯。"
           ],

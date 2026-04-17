@@ -35,7 +35,7 @@ program
   .command("persona")
   .requiredOption("--text <text>", "Persona description")
   .option("--title <text>", "Persona title", "current")
-  .description("Set or update the current writing persona in the vector store")
+  .description("Set or update the current writer identity in the vector store")
   .action(async (options: { text: string; title?: string }) => {
     const embeddingService = new EmbeddingService();
     const vectorStore = new VectorStore();
