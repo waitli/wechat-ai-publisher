@@ -1,0 +1,17 @@
+node_modules
+dist
+.env
+.DS_Store
+*.log
+data/vectordb.lancedb
+assets/images/*
+!assets/images/.gitkeep
+drafts/current/*
+!drafts/current/.gitkeep
+drafts/archive/*
+!drafts/archive/.gitkeep
+logs/*
+!logs/.gitkeep
+data/run-history/*
+!data/run-history/.gitkeep
+

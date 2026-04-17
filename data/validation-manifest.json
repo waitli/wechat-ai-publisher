@@ -1,0 +1,8 @@
+{
+  "scannedFiles": 1,
+  "insertedChunks": 3,
+  "totalChunks": 3,
+  "builtAt": "2026-04-16T03:20:40.246Z",
+  "vectorDbPath": "/home/halcyon/my-wechat-ai-publisher/data/validation-vectordb.lancedb",
+  "tableName": "style_history"
+}
